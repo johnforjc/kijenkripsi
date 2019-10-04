@@ -41,6 +41,7 @@ int main(){
     extractIndex.insert(pair<char, int>('z', 55));
 
     printf("File OK\n");
+    printf("%d\n", extractIndex['d']);
 
     char extractChar[5][5]={{'q', 'u', 'a', 't', 'e'},
                             {'r', 'v', 'o', 'i', 's'},
