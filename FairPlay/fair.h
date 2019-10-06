@@ -8,7 +8,7 @@ char extractChar[5][5]={{'q', 'u', 'a', 't', 'e'},
                             {'r', 'v', 'o', 'i', 's'},
                             {'b', 'c', 'd', 'f', 'g'},
                             {'h', 'k', 'l', 'm', 'n'},
-                            {'p', 'e', 'x', 'y', 'z'}};
+                            {'p', 'w', 'x', 'y', 'z'}};
 void generateExtractIndex(){
     extractIndex.insert(pair<char, int>('q', 11));
     extractIndex.insert(pair<char, int>('u', 12));
