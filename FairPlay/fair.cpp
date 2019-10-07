@@ -16,31 +16,42 @@ char buffer1, buffer2;
 void enkripsi(){
     int i1,j1,i2,j2,encrypted_i1,encrypted_i2,encrypted_j1,encrypted_j2;
 
+    if(buffer1 == 'j'){
+        buffer1 = 'i';
+    }
+    if(buffer2 == 'j'){
+        buffer2 = 'i';
+    }
+
     i1 = extractIndex[buffer1]/10 - 1;
     j1 = extractIndex[buffer1]%10 - 1;
     i2 = extractIndex[buffer2]/10 - 1;
     j2 = extractIndex[buffer2]%10 - 1;
     //printf("%d=%d=%d=%d\n", i1,j1,i2,j2);
 
-    if(i1==i2 && j1==j2){
+    if(i1==i2 && j1==j2)                    // Hurufnya double (*Dengan asumsi menggunakan play fair modern)
+    {
         encrypted_i1 = (i1 + 1)%5;
         encrypted_j1 = (j1 + 1)%5;
         encrypted_i2 = (i2 + 1)%5;
         encrypted_j2 = (j2 + 1)%5;
     }
-    else if(i1==i2){
+    else if(i1==i2)                         // Barisnya sama tetapi kolom beda
+    {
         encrypted_i1 = i1;
         encrypted_j1 = (j1 + 1)%5;
         encrypted_i2 = i2;
         encrypted_j2 = (j2 + 1)%5;
     }
-    else if(j1==j2){
+    else if(j1==j2)                         // Kolomnya sama tetapi baris beda
+    {
         encrypted_i1 = (i1 + 1)%5;
         encrypted_j1 = j1;
         encrypted_i2 = (i2 + 1)%5;
         encrypted_j2 = j2;
     }
-    else{
+    else                                    // Beda kolom dan baris
+    {
         encrypted_i1 = i1;
         encrypted_j1 = j2;
         encrypted_i2 = i2;
@@ -60,25 +71,29 @@ void dekripsi(){
     j2 = extractIndex[buffer2]%10 - 1;
     //printf("%d=%d=%d=%d\n", i1,j1,i2,j2);
 
-    if(i1==i2 && j1==j2){
+    if(i1==i2 && j1==j2)                    // Hurufnya double (*Dengan asumsi menggunakan play fair modern)
+    {
         decrypted_i1 = ((i1 - 1)%5+5)%5;
         decrypted_j1 = ((j1 - 1)%5+5)%5;
         decrypted_i2 = ((i2 - 1)%5+5)%5;
         decrypted_j2 = ((j2 - 1)%5+5)%5;
     }
-    else if(i1==i2){
+    else if(i1==i2)                         // Barisnya sama tetapi kolom beda
+    {
         decrypted_i1 = i1;
         decrypted_j1 = ((j1 - 1)%5+5)%5;
         decrypted_i2 = i2;
         decrypted_j2 = ((j2 - 1)%5+5)%5;
     }
-    else if(j1==j2){
+    else if(j1==j2)                         // Kolomnya sama tetapi baris beda
+    {
         decrypted_i1 = ((i1 - 1)%5+5)%5;
         decrypted_j1 = j1;
         decrypted_i2 = ((i2 - 1)%5+5)%5;
         decrypted_j2 = j2;
     }
-    else{
+    else                                    // Beda kolom dan baris
+    {
         decrypted_i1 = i1;
         decrypted_j1 = j2;
         decrypted_i2 = i2;
@@ -87,6 +102,7 @@ void dekripsi(){
 
     buffer1 = extractChar[decrypted_i1][decrypted_j1];
     buffer2 = extractChar[decrypted_i2][decrypted_j2];
+
 }
 
 int main(){
@@ -95,11 +111,12 @@ int main(){
     char count, length, mode;
     bool hurufBesar1, hurufBesar2;
     //test = "Dtppr Fvksmb Bunoxoy";
-    test = "Fanni Bucins Sekali";
-    mode = 'e';
+    test = "Sileqmel";
+    mode = 'd';
     count = 1;
     hurufBesar1 = false;
     hurufBesar2 = false;
+    queue <char> ignoredChar;
 
     // cout << test[2] << "\n";
 
@@ -112,13 +129,6 @@ int main(){
 
     for (int i = 0; i <= test.length(); i++)
     {
-
-        if(test[i] == ' ')
-        {
-            if (count == 1) printf(" ");
-            continue;
-        }  
-        
         if (i == test.length() && count == 2)
         {
             buffer2 = 'x';
@@ -152,7 +162,13 @@ int main(){
             continue;
         } 
 
-        if (count != 2)
+        else if(! ( (test[i]>64 && test[i]<91 ) || (test[i]>96 && test[i]<123 ) ) )
+        {
+            if (count == 1) printf("%c", test[i]);
+            else ignoredChar.push(test[i]);
+        }  
+
+        else if (count != 2)
         {
             buffer1 = test[i];
             //cek apakah huruf kecil atau besar
@@ -189,11 +205,13 @@ int main(){
                 hurufBesar2 = false;
             }
 
-            if(test[i-1] == ' ')
+            printf("%c", buffer1);
+            while(!ignoredChar.empty())
             {
-                printf("%c %c.", buffer1, buffer2);
+                printf("%c", ignoredChar.front());
+                ignoredChar.pop();
             }
-            else printf("%c%c.", buffer1, buffer2);
+            printf("%c", buffer2);
             
             count = 1;
         }
