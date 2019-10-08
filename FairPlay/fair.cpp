@@ -107,11 +107,23 @@ void dekripsi(){
 
 int main(){
 
+    FILE *in, *out;
+
+    in = fopen ("testCase.txt", "r");
+    out = fopen("testCase_Encrypted.txt","a");
+
+    if(!in)
+    {
+        printf("File txt tidak bisa dibuka.\n");
+        exit(0);
+    }
+
     string test; 
-    char count, length, mode;
+    char count, length, mode, pick;
+    char tmp=NULL;
     bool hurufBesar1, hurufBesar2;
     //test = "Dtppr Fvksmb Bunoxoy";
-    test = "Box";
+    //test = "Box";
     mode = 'e';
     count = 1;
     hurufBesar1 = false;
@@ -127,9 +139,11 @@ int main(){
 
     // printf("%c", extractChar[0][3]);
 
-    for (int i = 0; i <= test.length(); i++)
+    do
     {
-        if (i == test.length() && count == 2)
+        pick = getc(in);
+
+        if (pick == EOF && count == 2)
         {
             buffer2 = 'x';
 
@@ -157,20 +171,20 @@ int main(){
                 hurufBesar2 = false;
             }
 
-            printf("%c%c#", buffer1, buffer2);
+            fprintf(out,"%c%c", buffer1, buffer2);
             count = 1;
             continue;
         } 
 
-        else if(! ( (test[i]>64 && test[i]<91 ) || (test[i]>96 && test[i]<123 ) ) )
+        else if(! ( (pick>64 && pick<91 ) || (pick>96 && pick<123 ) ) )
         {
-            if (count == 1) printf("%c", test[i]);
-            else ignoredChar.push(test[i]);
+            if (count == 1) fprintf(out,"%c", pick);
+            else ignoredChar.push(pick);
         }  
 
         else if (count != 2)
         {
-            buffer1 = test[i];
+            buffer1 = pick;
             //cek apakah huruf kecil atau besar
             if(buffer1>64 && buffer1<91){
                 buffer1 = buffer1 + 32;
@@ -180,14 +194,14 @@ int main(){
         }
         else if(count == 2)
         {
-            buffer2 = test[i];
+            buffer2 = pick;
             //cek apakah huruf kecil atau besar
             if(buffer2>64 && buffer2<91){
                 buffer2 = buffer2 + 32;
                 hurufBesar2 = true;
             }
 
-            if(buffer1==buffer2) buffer2='x', i--;
+            if(buffer1==buffer2) buffer2='x', tmp=pick;
 
             //enkripsi atau dekripsi
             if(mode == 'e'){
@@ -207,16 +221,29 @@ int main(){
                 hurufBesar2 = false;
             }
 
-            printf("%c", buffer1);
+            fprintf(out,"%c", buffer1);
             while(!ignoredChar.empty())
             {
-                printf("%c", ignoredChar.front());
+                fprintf(out,"%c", ignoredChar.front());
                 ignoredChar.pop();
             }
-            printf("%c", buffer2);
+            fprintf(out,"%c", buffer2);
             
             count = 1;
         }
 
+        if(tmp!=NULL)
+        {
+            buffer1=tmp;
+            tmp=NULL;
+            count=2;
+        }
+
     }
+    while(pick != EOF);
+
+    while(!ignoredChar.empty()) fprintf(out,"%c", ignoredChar.front()), ignoredChar.pop();
+
+    fclose(in);
+    fclose(out);
 }
