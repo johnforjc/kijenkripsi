@@ -111,8 +111,8 @@ int main(){
     char count, length, mode;
     bool hurufBesar1, hurufBesar2;
     //test = "Dtppr Fvksmb Bunoxoy";
-    test = "Sileqmel";
-    mode = 'd';
+    test = "Box";
+    mode = 'e';
     count = 1;
     hurufBesar1 = false;
     hurufBesar2 = false;
@@ -186,6 +186,8 @@ int main(){
                 buffer2 = buffer2 + 32;
                 hurufBesar2 = true;
             }
+
+            if(buffer1==buffer2) buffer2='x', i--;
 
             //enkripsi atau dekripsi
             if(mode == 'e'){
