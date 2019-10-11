@@ -1,5 +1,7 @@
-#include <bits/stdc++.h>
-#include "fair.h"
+#include <stdio.h>
+#include <map>
+#include <queue>
+#include "structure.h"
 using namespace std;
 
 class playFair{
@@ -35,7 +37,6 @@ class playFair{
         j1 = extractIndex[buffer1]%10 - 1;
         i2 = extractIndex[buffer2]/10 - 1;
         j2 = extractIndex[buffer2]%10 - 1;
-        //printf("%d=%d=%d=%d\n", i1,j1,i2,j2);
 
         if(i1==i2 && j1==j2)                    // Hurufnya double (*Dengan asumsi menggunakan play fair modern)
         {
@@ -77,7 +78,6 @@ class playFair{
         j1 = extractIndex[buffer1]%10 - 1;
         i2 = extractIndex[buffer2]/10 - 1;
         j2 = extractIndex[buffer2]%10 - 1;
-        //printf("%d=%d=%d=%d\n", i1,j1,i2,j2);
 
         if(i1==i2 && j1==j2)                    // Hurufnya double (*Dengan asumsi menggunakan play fair modern)
         {
@@ -250,18 +250,6 @@ class playFair{
     }
 };
 
-void printHelp()
-{
-    printf("Program ini merupakan program yang digunakan untuk mengenkripsi ataupun mendekripsikan sebuah file\n");
-    printf("Program ini menggunakan key \"QUATERVOIS\"");
-    printf("Format untuk menjalankan program ini adalah\n");
-    printf("\t\t./playFair -mode path\n");
-    printf("Mode yang bisa dilakukan adalah:\n");
-    printf("\t\t\t-h --help\t\tmode ini digunakan untuk melihat help seperti ini\n");
-    printf("\t\t\t-e --Enkripsi\t\tmode untuk mengenkripsikan sebuah teks sesuai dengan path file yang telah ditentukan\n");
-    printf("\t\t\t-d --Dekripsi\t\tmode untuk mendekripsikan sebuah teks sesuai dengan path file yang telah ditentukan\n");
-}
-
 int main(int argc, char *argv[]){
 
     char mode[50], path[255];
@@ -276,14 +264,12 @@ int main(int argc, char *argv[]){
         }
         else{
             playFair myPlayFair;
-            // strcpy(path, argv[2]);
             int i;
             for(i=0; i<strlen(argv[2]); i++)
             {
                 path[i]=argv[2][i];
             }
             path[i]='\0';
-            // printf("%s", argv[2]);
             bool myMode;
             if(strcmp(mode, "-e") || strcmp(mode, "--Enkripsi")) myMode=true;
             else myMode=false;
