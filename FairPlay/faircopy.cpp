@@ -276,8 +276,14 @@ int main(int argc, char *argv[]){
         }
         else{
             playFair myPlayFair;
-            strcpy(path, argv[2]);
-            printf("%s", argv[2]);
+            // strcpy(path, argv[2]);
+            int i;
+            for(i=0; i<strlen(argv[2]); i++)
+            {
+                path[i]=argv[2][i];
+            }
+            path[i]='\0';
+            // printf("%s", argv[2]);
             bool myMode;
             if(strcmp(mode, "-e") || strcmp(mode, "--Enkripsi")) myMode=true;
             else myMode=false;
