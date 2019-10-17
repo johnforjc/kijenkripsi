@@ -5,9 +5,6 @@ typedef struct blok{
 	int s[4][4];
 }blok;
 
-// blok holder
-vector<blok> v_blok;
-blok key[11];
 int rc[10] = { 
 0x01,0x02,
 0x04,0x08,
@@ -66,76 +63,16 @@ int isbox[16][16] =
  ,0xa0 ,0xe0 ,0x3b ,0x4d ,0xae ,0x2a ,0xf5 ,0xb0 ,0xc8 ,0xeb ,0xbb ,0x3c ,0x83 ,0x53 ,0x99 ,0x61
  ,0x17 ,0x2b ,0x04 ,0x7e ,0xba ,0x77 ,0xd6 ,0x26 ,0xe1 ,0x69 ,0x14 ,0x63 ,0x55 ,0x21 ,0x0c ,0x7d
  };
- 
-int ubah_char(char c)
-{
-	switch(c) 
-	{ 
-	case '0' : return 0;
-    case '1' : return 1;
-    case '2' : return 2;
-    case '3' : return 3;
-    case '4' : return 4;
-    case '5' : return 5;
-    case '6' : return 6;
-    case '7' : return 7;
-    case '8' : return 8;
-    case '9' : return 9;
-    case 'a' : return 10;
-    case 'b' : return 11;
-    case 'c' : return 12;
-    case 'd' : return 13;
-    case 'e' : return 14;
-    case 'f' : return 15;
-	}
-}
 
-char ubah_int(int c)
+void get_key(blok *key)
 {
-	switch(c) 
-	{ 
-	case 0 :  return '0';
-    case 1 :  return '1';
-    case 2 :  return '2';
-    case 3 :  return '3';
-    case 4 :  return '4';
-    case 5 :  return '5';
-    case 6 :  return '6';
-    case 7 :  return '7';
-    case 8 :  return '8';
-    case 9 :  return '9';
-    case 10 : return 'a';
-    case 11 : return 'b';
-    case 12 : return 'c';
-    case 13 : return 'd';
-    case 14 : return 'e';
-    case 15 : return 'f';
-	}
-}
-
-int get_sbox(int tmp)
-{
-	char s[3];
-	sprintf(s,"%x\0",tmp);
-	if(strlen(s)==1)
-	{
-		s[2]='\0';
-		s[1]=s[0];
-		s[0]='0';
-	}
-	return sbox[ubah_char(s[0])][ubah_char(s[1])];
-}
-
-
-void get_key()
-{
-	char c;
+	int c;
 	ifstream fin;
 	fin.open("key.txt");
 	for(int j=0; j<4; j++)
 		for(int k=0; k<4; k++)
 		{
-			fin.get(c);
+			fin >> hex >> c;
 			key[0].s[j][k]=c;
 		}
 	fin.close();
@@ -143,13 +80,13 @@ void get_key()
 	for(int i=1; i<11; i++)
 	{
 		int g[4];
-		// shift left and sub column
+		// shift left and sub column key kolom - 3 untuk mendapat g
 		for(int j=0; j<4; j++)
 		{
 			if(j<3)
-				g[j] = get_sbox(key[i-1].s[j+1][3]);
+				g[j] = sbox[key[i-1].s[j+1][3]/16][key[i-1].s[j+1][3]%16];
 			else
-				g[j] = get_sbox(key[i-1].s[0][3]);
+				g[j] = sbox[key[i-1].s[0][3]/16][key[i-1].s[0][3]%16]; 
 		}
 		g[0] = g[0]^rc[i-1];
 		
@@ -164,260 +101,217 @@ void get_key()
 	}
 }
 
-void print_key()
-{
-	for(int i=0; i<11; i++)
-	{
-		printf("key %d : ",i);
-		for(int j=0; j<4; j++)
-				for(int k=0; k<4; k++)
-					printf("%c",key[i].s[j][k]);
-		printf("\n");
-	}
-}
-
-const int overflow = 0x100, modu = 0x11B; 
+const int of = 0x100, m = 0x11B;
 int gf_mul(int a, int b) {
     int sum = 0;
     while (b > 0) {
         if (b & 1) sum = sum ^ a;             
         b = b >> 1;                           
         a = a << 1;                           
-        if (a & overflow) a = a ^ modu;    
+        if (a & of) a = a ^ m;    
     }
     return sum;
 }
 
-void init()
+void sub_column(blok &bk)
 {
-	// take file to str
-	char c;
-	string str="";
-	ifstream fin;
-	fin.open("file.txt");
-	while (fin.get(c))
-		str+=c;
-	fin.close();
+	for(int j=0; j<4; j++)
+		for(int k=0; k<4; k++)
+			bk.s[j][k]=sbox[bk.s[j][k]/16][bk.s[j][k]%16];
+		
+}
+
+void inv_sub_column(blok &bk)
+{
+	for(int j=0; j<4; j++)
+		for(int k=0; k<4; k++)
+			bk.s[j][k]=isbox[bk.s[j][k]/16][bk.s[j][k]%16];
+}
+
+void shift_row(blok &bk)
+{
+	int tmp;
+	tmp=bk.s[1][0];
+	bk.s[1][0] = bk.s[1][1]; 
+	bk.s[1][1] = bk.s[1][2]; 
+	bk.s[1][2] = bk.s[1][3];
+	bk.s[1][3] = tmp;
+		
+	tmp=bk.s[2][0];
+	bk.s[2][0] = bk.s[2][2]; 
+	bk.s[2][2] = tmp; 
+	tmp=bk.s[2][1];
+	bk.s[2][1] = bk.s[2][3];
+	bk.s[2][3] = tmp;
+			
+	tmp=bk.s[3][0];
+	bk.s[3][0] = bk.s[3][3]; 
+	bk.s[3][3] = bk.s[3][2]; 
+	bk.s[3][2] = bk.s[3][1];
+	bk.s[3][1] = tmp;
 	
-		// Input blok/Push ke vector
-		int c_jum=str.length();
-		int b_jum=c_jum/16;
-		int sisa = c_jum%16;
-		int cnt=0;
-		
-		for(int i=0; i<b_jum; i++)
-		{
-			blok b_tmp;
-			for(int j=0; j<4; j++)
-				for(int k=0; k<4; k++)
-				{
-					b_tmp.s[j][k]=str[cnt];
-					cnt++;
-				}
-			v_blok.push_back(b_tmp);
-		}
-		
-		if( sisa > 0 )
-		{
-			blok b_tmp;
-			for(int j=0; j<4; j++)
-				for(int k=0; k<4; k++)
-				{
-					if(sisa>0)
-					{
-						b_tmp.s[j][k]=str[cnt];
-						cnt++;
-						sisa--;
-					}
-					else 
-					{
-						b_tmp.s[j][k]=' ';
-					}	
-				}
-			v_blok.push_back(b_tmp);
-		}
 }
 
-void sub_column()
+void inv_shift_row(blok &bk)
 {
-	// sub column
-	for(int i=0; i<v_blok.size(); i++)
-		for(int j=0; j<4; j++)
-			for(int k=0; k<4; k++)
-				v_blok[i].s[j][k]=get_sbox(v_blok[i].s[j][k]);
-}
-
-void inv_sub_column()
-{
-	// sub column
-	for(int i=0; i<v_blok.size(); i++)
-		for(int j=0; j<4; j++)
-			for(int k=0; k<4; k++)
-			{
-				char s[3];
-				sprintf(s,"%x\0",v_blok[i].s[j][k]);
-				if(strlen(s)==1)
-				{
-					s[2]='\0';
-					s[1]=s[0];
-					s[0]='0';
-				}
-				v_blok[i].s[j][k]=isbox[ubah_char(s[0])][ubah_char(s[1])];
-			}
-}
-
-void shift_row()
-{
-	// shift row
-	for(int i=0; i<v_blok.size(); i++)
-	{
-		int tmp;
-		tmp=v_blok[i].s[1][0];
-		v_blok[i].s[1][0] = v_blok[i].s[1][1]; 
-		v_blok[i].s[1][1] = v_blok[i].s[1][2]; 
-		v_blok[i].s[1][2] = v_blok[i].s[1][3];
-		v_blok[i].s[1][3] = tmp;
+	int tmp;
+	tmp=bk.s[3][0];
+	bk.s[3][0] = bk.s[3][1]; 
+	bk.s[3][1] = bk.s[3][2]; 
+	bk.s[3][2] = bk.s[3][3];
+	bk.s[3][3] = tmp;
 		
-		tmp=v_blok[i].s[2][0];
-		v_blok[i].s[2][0] = v_blok[i].s[2][2]; 
-		v_blok[i].s[2][2] = tmp; 
-		tmp=v_blok[i].s[2][1];
-		v_blok[i].s[2][1] = v_blok[i].s[2][3];
-		v_blok[i].s[2][3] = tmp;
+	tmp=bk.s[2][0];
+	bk.s[2][0] = bk.s[2][2]; 
+	bk.s[2][2] = tmp; 
+	tmp=bk.s[2][1];
+	bk.s[2][1] = bk.s[2][3];
+	bk.s[2][3] = tmp;
 			
-		tmp=v_blok[i].s[3][0];
-		v_blok[i].s[3][0] = v_blok[i].s[3][3]; 
-		v_blok[i].s[3][3] = v_blok[i].s[3][2]; 
-		v_blok[i].s[3][2] = v_blok[i].s[3][1];
-		v_blok[i].s[3][1] = tmp;
-	}	
+	tmp=bk.s[1][0];
+	bk.s[1][0] = bk.s[1][3]; 
+	bk.s[1][3] = bk.s[1][2]; 
+	bk.s[1][2] = bk.s[1][1];
+	bk.s[1][1] = tmp;
 }
 
-
-void inv_shift_row()
-{
-	// shift row
-	for(int i=0; i<v_blok.size(); i++)
-	{
-		int tmp;
-		tmp=v_blok[i].s[3][0];
-		v_blok[i].s[3][0] = v_blok[i].s[3][1]; 
-		v_blok[i].s[3][1] = v_blok[i].s[3][2]; 
-		v_blok[i].s[3][2] = v_blok[i].s[3][3];
-		v_blok[i].s[3][3] = tmp;
-		
-		tmp=v_blok[i].s[2][0];
-		v_blok[i].s[2][0] = v_blok[i].s[2][2]; 
-		v_blok[i].s[2][2] = tmp; 
-		tmp=v_blok[i].s[2][1];
-		v_blok[i].s[2][1] = v_blok[i].s[2][3];
-		v_blok[i].s[2][3] = tmp;
-			
-		tmp=v_blok[i].s[1][0];
-		v_blok[i].s[1][0] = v_blok[i].s[1][3]; 
-		v_blok[i].s[1][3] = v_blok[i].s[1][2]; 
-		v_blok[i].s[1][2] = v_blok[i].s[1][1];
-		v_blok[i].s[1][1] = tmp;
-	}	
-}
-
-
-void mix_column()
+void mix_column(blok &bk)
 {
 	int arr_tmp[4];
-	
-	for(int i=0; i<v_blok.size(); i++)
-		for(int k=0; k<4; k++)
-		{
-			// get row
-			for(int z=0; z<4; z++)
-				arr_tmp[z] = v_blok[i].s[z][k];
+	for(int k=0; k<4; k++)
+	{
+		// get column
+		for(int j=0; j<4; j++)
+			arr_tmp[j] = bk.s[j][k];
 			
-			// find each value of column k row j
-			for(int j=0; j<4; j++)
-			{
-				v_blok[i].s[j][k]=
-				gf_mul(arr_tmp[0],mix_arr[j][0])^gf_mul(arr_tmp[1],mix_arr[j][1])^
-				gf_mul(arr_tmp[2],mix_arr[j][2])^gf_mul(arr_tmp[3],mix_arr[j][3]);
-			}
+		// find each value of column k row j
+		for(int j=0; j<4; j++)
+		{
+			bk.s[j][k]=
+			gf_mul(arr_tmp[0],mix_arr[j][0])^gf_mul(arr_tmp[1],mix_arr[j][1])^
+			gf_mul(arr_tmp[2],mix_arr[j][2])^gf_mul(arr_tmp[3],mix_arr[j][3]);
 		}
+	}
 }
 
-void inv_mix_column()
+void inv_mix_column(blok &bk)
 {
 	int arr_tmp[4];
-	
-	for(int i=0; i<v_blok.size(); i++)
-		for(int k=0; k<4; k++)
-		{
-			// get row
-			for(int z=0; z<4; z++)
-				arr_tmp[z] = v_blok[i].s[z][k];
+	for(int k=0; k<4; k++)
+	{
+		// get row
+		for(int j=0; j<4; j++)
+			arr_tmp[j] = bk.s[j][k];
 			
-			// find each value of column k row j
-			for(int j=0; j<4; j++)
-			{
-				v_blok[i].s[j][k]=
-				gf_mul(arr_tmp[0],inv_mix_arr[j][0])^gf_mul(arr_tmp[1],inv_mix_arr[j][1])^
-				gf_mul(arr_tmp[2],inv_mix_arr[j][2])^gf_mul(arr_tmp[3],inv_mix_arr[j][3]);
-			}
-		}
-}
-
-void add_key(int x)
-{
-	for(int i=0; i<v_blok.size(); i++)
-		for(int j=0; j<4; j++)
-			for(int k=0; k<4; k++)
-				v_blok[i].s[j][k] = v_blok[i].s[j][k] ^ key[x].s[j][k];
-}
-
-void print()
-{
-	// output tes
-	for(int i=0; i<v_blok.size(); i++)
+		// find each value of column k row j
 		for(int j=0; j<4; j++)
 		{
-			for(int k=0; k<4; k++)
-				printf("%c",v_blok[i].s[j][k]);
+			bk.s[j][k]=
+			gf_mul(arr_tmp[0],inv_mix_arr[j][0])^gf_mul(arr_tmp[1],inv_mix_arr[j][1])^
+			gf_mul(arr_tmp[2],inv_mix_arr[j][2])^gf_mul(arr_tmp[3],inv_mix_arr[j][3]);
 		}
-	printf("\n");
+	}
 }
 
-int main () {
-	init();
-	get_key();
-	print_key();
-	
-	// encrypt
-	print();
-	add_key(0);
+void add_key(int x, blok &bk, blok *key)
+{
+	for(int j=0; j<4; j++)
+		for(int k=0; k<4; k++)
+			bk.s[j][k] = bk.s[j][k] ^ key[x].s[j][k];
+}
+
+void enkripsi(blok &bk, blok *key)
+{
+	add_key(0,bk,key);
 	for(int i=1; i<=9; i++)
 	{
-		sub_column();
-		shift_row();
-		mix_column();
-		add_key(i);
+		sub_column(bk);
+		shift_row(bk);
+		mix_column(bk);
+		add_key(i,bk,key);
 	}
-	sub_column();
-	shift_row();
-	add_key(10);
-	print();
-	
-	// decrypt
-	add_key(10);
+	sub_column(bk);
+	shift_row(bk);
+	add_key(10,bk,key);
+}
+
+void dekripsi(blok &bk, blok *key)
+{
+	add_key(10,bk,key);
 	for(int i=9; i>=1; i--)
 	{
-		inv_shift_row();
-		inv_sub_column();
-		add_key(i);
-		inv_mix_column();
+		inv_shift_row(bk);
+		inv_sub_column(bk);
+		add_key(i,bk, key);
+		inv_mix_column(bk);
 	}
-	inv_shift_row();
-	inv_sub_column();
-	add_key(0);
+	inv_shift_row(bk);
+	inv_sub_column(bk);
+	add_key(0,bk, key);
+
+}
+
+void print(blok bk)
+{
+	// output tes
+	for(int j=0; j<4; j++)
+		for(int k=0; k<4; k++)
+			printf("%x ",bk.s[j][k]);
+}
+
+int main () 
+{
+	// blok key
+	blok key[11];
+	get_key(key);
+	print(key[0]);
 	
-	print();
+	int pilihan;
+	system("CLS");
+	printf("Daftar Pilihan : \n");
+	printf("1. Enkripsi\n");
+	printf("2. Dekripsi\n");
+	printf("Masukkan Pilihan : ");
+	scanf("%d",&pilihan);
 	
+	system("CLS");
+	
+	// blok chipper text
+	blok bk;
+	int cnt = 0;
+	int c;
+	
+	ifstream fin;
+	fin.open("file.txt");
+	while (fin >> hex >> c)
+	{
+		bk.s[cnt/4][cnt%4]=c;
+		cnt++;
+		
+		if(cnt == 16)
+		{
+			if(pilihan == 1)
+				enkripsi(bk, key);
+			else
+				dekripsi(bk, key);
+			print(bk);
+			cnt = 0;
+		}
+	}
+	fin.close();
+	
+	if(cnt > 0)
+	{
+		for(; cnt<=16; cnt++) 
+			bk.s[cnt/4][cnt%4]=' ';
+	
+		if(pilihan == 1)
+			enkripsi(bk, key);
+		else
+			dekripsi(bk, key);
+		print(bk);
+		cnt = 0;
+	}
+
   return 0;
 }
