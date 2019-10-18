@@ -26,9 +26,9 @@ void printHelp()
     printf("Format untuk menjalankan program ini adalah\n");
     printf("\t\t./playFair -mode path\n");
     printf("Mode yang bisa dilakukan adalah:\n");
-    printf("\t\t\t-h --help\t\tmode ini digunakan untuk melihat help seperti ini\n");
-    printf("\t\t\t-e --Enkripsi\t\tmode untuk mengenkripsikan sebuah teks sesuai dengan path file yang telah ditentukan\n");
-    printf("\t\t\t-d --Dekripsi\t\tmode untuk mendekripsikan sebuah teks sesuai dengan path file yang telah ditentukan\n");
+    printf("\t\t\t--h -help\t\tmode ini digunakan untuk melihat help seperti ini\n");
+    printf("\t\t\t--e -Enkripsi\t\tmode untuk mengenkripsikan sebuah teks sesuai dengan path file yang telah ditentukan\n");
+    printf("\t\t\t--d -Dekripsi\t\tmode untuk mendekripsikan sebuah teks sesuai dengan path file yang telah ditentukan\n");
 }
 
 #endif
