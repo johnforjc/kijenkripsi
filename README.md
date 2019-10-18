@@ -7,7 +7,7 @@ Untuk proses pembuatannya kami menggunakan IDE Visual Studio Code
 
 ### Penjelasan Code dari PlayFair
 Pada program kami, terdapat dua file yaitu structure.h dan fair.cpp. Di dalam structure.h terdapat semua hal yang dibutuhkan pada saat decrypt dan encrypt. Dalam file structure terdapat dua struktur data.
-1. Matrix 5x5
+1. **Matrix 5x5**
 
 ```
 char extractChar[5][5]=     {{'q', 'u', 'a', 't', 'e'},
@@ -28,7 +28,7 @@ Struktur data ini bertujuan untuk mengambil karakter pada posisi yang ditentukan
 
 Setelah melakukan proses demikian, maka perlu mengambil karakter yang sesuai dengan posisi setelah diubah. Sehingga struktur data ini akan langsung mengambil kontain dari extractChar[i][j]
 
-2. Struktur data map
+2. **Struktur data map**
 
 ```
 void generateExtractIndex(){
@@ -48,7 +48,25 @@ Struktur data ini memudahkan untuk mencari index dari karakter yang akan diubah,
         j1 = extractIndex[buffer1]%10 - 1;
 ```
 
-Buffer1 merupakan variabel char yang berisi karakter yang akan diganti
+Buffer1 merupakan variabel char yang berisi karakter yang akan diganti. Karena dalam struktur data map, kita diizinkan untuk menggunakan variabel non integer untuk menjadi index.
+
+Dalam fair.cpp, terdapat tiga fungsi yang paling utama, yaitu:
+
+1. **Enkripsi dan Dekripsi**
+
+Fungsi ini berjalan untuk mengenkripsikan ataupun mendekripsikan dua karakter yang dipassing.
+
+2. **setPathFile**
+
+Fungsi ini untuk setting path file yang akan diencrypt ataupun didekripsi, dan juga file yang dihasilkan setelah proses enkripsi selesai
+
+3. **readFile**
+
+Fungsi ini membaca semua karakter yang ada pada file yang akan diencrypt ataupun didecrypt. Dalam fungsi ini akan memanggil fungsi enkripsi dan dekripsi sesuai mode yang dipilih dengan mempassing dua karakter kedalam fungsi itu.
+
+Ketiga fungsi ini berada dalam suatu class. Alasan kita menggunakan class, karena kita ingin sekadar berlatih apa yang sudah kita dapatkan di semester lalu.
+
+### Menjalankan Program
 
 Untuk melakukan build (sudah kami build) bisa menggunakan syntax:
 
