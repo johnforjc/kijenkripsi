@@ -1,5 +1,10 @@
 # KIJ Enkripsi
 
+## AES (Advanced Encryption Standard)
+Program ini merupakan program yang digunakan untuk mengenkripsi ataupun mendekripsikan sebuah file menggunakan metode AES 128 bit
+Program ini menggunakan key 128 bit yang diinput melalui file key.txt
+Untuk proses pembuatannya kami menggunakan IDE Visual Studio Code
+
 ## Play Fair Cipher
 Program ini merupakan program yang digunakan untuk mengenkripsi ataupun mendekripsikan sebuah file menggunakan metode Play Fair cipher
 Program ini menggunakan key "QUATERVOIS"
