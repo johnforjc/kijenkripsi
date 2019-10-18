@@ -8,6 +8,7 @@ Untuk proses pembuatannya kami menggunakan IDE Visual Studio Code
 Untuk melakukan build (sudah kami build) bisa menggunakan syntax:
 
 **g++ -o playFair fair.cpp**
+
 Fungsinya adalah untuk membuat playFair.exe yang nantinya akan dirun untuk menjalankan program
 
 Kemudian untuk melakukan running program bisa menggunakan:
