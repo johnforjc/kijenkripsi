@@ -1,13 +1,17 @@
 # KIJ Enkripsi
 
-### Play Fair
+### Play Fair Cipher
 Program ini merupakan program yang digunakan untuk mengenkripsi ataupun mendekripsikan sebuah file menggunakan metode Play Fair cipher
-Program ini menggunakan key "QUATERVOIS"Format untuk menjalankan program ini adalah:
+Program ini menggunakan key "QUATERVOIS"
+Untuk proses pembuatannya kami menggunakan IDE Visual Studio Code
 
-./playFair -mode path
+Untuk melakukan build (sudah kami build) bisa menggunakan syntax: 
+### g++ -o playFair fair.cpp
 
-Mode yang bisa dilakukan adalah:
+Kemudian untuk melakukan running program bisa menggunakan:
+### ./playFair -mode path
 
+Mode yang bisa dipilih adalah:
 ### --h atau -help                
   Mode ini digunakan untuk melihat manual penggunaan program ini
   
