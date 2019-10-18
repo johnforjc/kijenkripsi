@@ -86,11 +86,11 @@ Kemudian untuk melakukan running program bisa menggunakan:
 Path adalah path dari file yang ingin di enkripsi / dekripsi
 Mode yang bisa dipilih adalah:
 
-  **--h atau -help**               
+  **-h atau --help**               
     Mode ini digunakan untuk melihat manual penggunaan program ini
   
-  **--e atau -enkripsi**            
+  **-e atau --enkripsi**            
     Mode untuk mengenkripsikan sebuah teks sesuai dengan path file yang telah ditentukan
   
-  **--d atau -dekripsi**           
+  **-d atau --dekripsi**           
     Mode untuk mendekripsikan sebuah teks sesuai dengan path file yang telah ditentukan
