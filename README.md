@@ -5,6 +5,51 @@ Program ini merupakan program yang digunakan untuk mengenkripsi ataupun mendekri
 Program ini menggunakan key "QUATERVOIS"
 Untuk proses pembuatannya kami menggunakan IDE Visual Studio Code
 
+### Penjelasan Code dari PlayFair
+Pada program kami, terdapat dua file yaitu structure.h dan fair.cpp. Di dalam structure.h terdapat semua hal yang dibutuhkan pada saat decrypt dan encrypt. Dalam file structure terdapat dua struktur data.
+1. Matrix 5x5
+
+```
+char extractChar[5][5]=     {{'q', 'u', 'a', 't', 'e'},
+                            {'r', 'v', 'o', 'i', 's'},
+                            {'b', 'c', 'd', 'f', 'g'},
+                            {'h', 'k', 'l', 'm', 'n'},
+                            {'p', 'w', 'x', 'y', 'z'}};
+```
+
+Struktur data ini bertujuan untuk mengambil karakter pada posisi yang ditentukan setelah diproses dalam encrypt dan decrypt. Dalam proses encrypt dan decrypt, terjadi perubahan posisi berdasarkan aturan yang telah ditentukan. Contoh perubahan posisi yang dilakukan pada proses encrypt dan decrypt:
+
+```
+            encrypted_i1 = i1;
+            encrypted_j1 = (j1 + 1)%5;
+            encrypted_i2 = i2;
+            encrypted_j2 = (j2 + 1)%5;
+```
+
+Setelah melakukan proses demikian, maka perlu mengambil karakter yang sesuai dengan posisi setelah diubah. Sehingga struktur data ini akan langsung mengambil kontain dari extractChar[i][j]
+
+2. Struktur data map
+
+```
+void generateExtractIndex(){
+    for(int i=0; i<5; i++)
+    {
+        for(int j=0; j<5; j++)
+        {
+            extractIndex.insert(pair<char, int>(extractChar[i][j], (i+1)*10+(j+1)));
+        }
+    }
+}
+```
+
+Struktur data ini memudahkan untuk mencari index dari karakter yang akan diubah, sehingga tidak diperlukan pencarian secara linear terus menerus. Untuk mendapatkan indexnya maka kita butuh memanggil index dengan karakter seperti berikut
+```
+        i1 = extractIndex[buffer1]/10 - 1;
+        j1 = extractIndex[buffer1]%10 - 1;
+```
+
+Buffer1 merupakan variabel char yang berisi karakter yang akan diganti
+
 Untuk melakukan build (sudah kami build) bisa menggunakan syntax:
 
   **g++ -o playFair fair.cpp**
